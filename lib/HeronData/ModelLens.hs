@@ -241,7 +241,7 @@ endUserReadParamsPageL f EndUserReadParams {..} = (\endUserReadParamsPage -> End
 {-# INLINE endUserReadParamsPageL #-}
 
 -- | 'endUserReadParamsStatus' Lens
-endUserReadParamsStatusL :: Lens_' EndUserReadParams (Maybe E'Status2)
+endUserReadParamsStatusL :: Lens_' EndUserReadParams (Maybe E'Status)
 endUserReadParamsStatusL f EndUserReadParams {..} = (\endUserReadParamsStatus -> EndUserReadParams {endUserReadParamsStatus, ..}) <$> f endUserReadParamsStatus
 {-# INLINE endUserReadParamsStatusL #-}
 

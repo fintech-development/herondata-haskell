@@ -194,7 +194,7 @@ newtype RequestId = RequestId {unRequestId :: Text} deriving (P.Eq, P.Show)
 
 -- ** Status
 
-newtype Status = Status {unStatus :: E'Status2} deriving (P.Eq, P.Show)
+newtype Status = Status {unStatus :: E'Status} deriving (P.Eq, P.Show)
 
 -- ** TimestampDateMax
 
@@ -582,7 +582,7 @@ data EndUserReadParams = EndUserReadParams
     -- | "page" - Pagination page number
     endUserReadParamsPage :: !(Maybe Int),
     -- | "status" - Filter by status of end user
-    endUserReadParamsStatus :: !(Maybe E'Status2)
+    endUserReadParamsStatus :: !(Maybe E'Status)
   }
   deriving (P.Show, P.Eq, P.Typeable)
 
@@ -2659,16 +2659,19 @@ toE'OrderBy2 = \case
 -- ** E'Status
 
 -- | Enum of 'Text' .
+-- Filter by status of end user
 -- Status of end user; 'ready' triggers async processing, 'review_requested' triggers manual review request
 data E'Status
   = -- | @"new"@
     E'Status'New
   | -- | @"ready"@
     E'Status'Ready
-  | -- | @"review_requested"@
-    E'Status'Review_requested
+  | -- | @"processed"@
+    E'Status'Processed
   | -- | @"reviewed"@
     E'Status'Reviewed
+  | -- | @"review_requested"@
+    E'Status'Review_requested
   deriving (P.Show, P.Eq, P.Typeable, P.Ord, P.Bounded, P.Enum)
 
 instance A.ToJSON E'Status where toJSON = A.toJSON . fromE'Status
@@ -2686,63 +2689,19 @@ fromE'Status :: E'Status -> Text
 fromE'Status = \case
   E'Status'New -> "new"
   E'Status'Ready -> "ready"
-  E'Status'Review_requested -> "review_requested"
+  E'Status'Processed -> "processed"
   E'Status'Reviewed -> "reviewed"
+  E'Status'Review_requested -> "review_requested"
 
 -- | parse 'E'Status' enum
 toE'Status :: Text -> P.Either String E'Status
 toE'Status = \case
   "new" -> P.Right E'Status'New
   "ready" -> P.Right E'Status'Ready
-  "review_requested" -> P.Right E'Status'Review_requested
+  "processed" -> P.Right E'Status'Processed
   "reviewed" -> P.Right E'Status'Reviewed
+  "review_requested" -> P.Right E'Status'Review_requested
   s -> P.Left $ "toE'Status: enum parse failure: " P.++ P.show s
-
--- ** E'Status2
-
--- | Enum of 'Text' .
--- Filter by status of end user
-data E'Status2
-  = -- | @"new"@
-    E'Status2'New
-  | -- | @"ready"@
-    E'Status2'Ready
-  | -- | @"processed"@
-    E'Status2'Processed
-  | -- | @"reviewed"@
-    E'Status2'Reviewed
-  | -- | @"review_requested"@
-    E'Status2'Review_requested
-  deriving (P.Show, P.Eq, P.Typeable, P.Ord, P.Bounded, P.Enum)
-
-instance A.ToJSON E'Status2 where toJSON = A.toJSON . fromE'Status2
-
-instance A.FromJSON E'Status2 where parseJSON o = P.either P.fail (pure . P.id) . toE'Status2 =<< A.parseJSON o
-
-instance WH.ToHttpApiData E'Status2 where toQueryParam = WH.toQueryParam . fromE'Status2
-
-instance WH.FromHttpApiData E'Status2 where parseQueryParam o = WH.parseQueryParam o >>= P.left T.pack . toE'Status2
-
-instance MimeRender MimeMultipartFormData E'Status2 where mimeRender _ = mimeRenderDefaultMultipartFormData
-
--- | unwrap 'E'Status2' enum
-fromE'Status2 :: E'Status2 -> Text
-fromE'Status2 = \case
-  E'Status2'New -> "new"
-  E'Status2'Ready -> "ready"
-  E'Status2'Processed -> "processed"
-  E'Status2'Reviewed -> "reviewed"
-  E'Status2'Review_requested -> "review_requested"
-
--- | parse 'E'Status2' enum
-toE'Status2 :: Text -> P.Either String E'Status2
-toE'Status2 = \case
-  "new" -> P.Right E'Status2'New
-  "ready" -> P.Right E'Status2'Ready
-  "processed" -> P.Right E'Status2'Processed
-  "reviewed" -> P.Right E'Status2'Reviewed
-  "review_requested" -> P.Right E'Status2'Review_requested
-  s -> P.Left $ "toE'Status2: enum parse failure: " P.++ P.show s
 
 -- * Auth Methods
 
